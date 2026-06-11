@@ -1,4 +1,5 @@
 import { SYSTEM_ROLES, ORG_ROLES, PUBLISHER_PERMISSIONS, SystemRole, OrgRole, PublisherPermission } from "./roles"
+import { PUBLISHER_TAGS, PublisherTag } from "./tags"
 
 export type ValidationError = Record<string, string>
 
@@ -6,6 +7,7 @@ export type ValidationError = Record<string, string>
 
 export interface CreatePublisherInput {
   name: string
+  tag: PublisherTag
 }
 
 export interface PublisherAccessInput {
@@ -34,8 +36,13 @@ export function validateCreatePublisher(body: unknown): { input?: CreatePublishe
     errors.name = "Publisher name is required"
   }
 
+  // Unknown/missing tag falls back to OTHER (the form always sends a valid value).
+  const tag: PublisherTag = (PUBLISHER_TAGS as readonly string[]).includes(b.tag as string)
+    ? (b.tag as PublisherTag)
+    : "OTHER"
+
   if (Object.keys(errors).length > 0) return { errors }
-  return { input: { name: (b.name as string).trim() } }
+  return { input: { name: (b.name as string).trim(), tag } }
 }
 
 export function validateCreateUser(body: unknown): { input?: CreateUserInput; errors?: ValidationError } {

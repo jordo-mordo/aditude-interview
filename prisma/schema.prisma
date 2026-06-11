@@ -23,6 +23,7 @@ model Organization {
 model Publisher {
   id           String   @id @default(cuid())
   name         String
+  tag          String   @default("OTHER") // content vertical, e.g. "NEWS" | "SPORTS" — see src/lib/tags.ts
   orgId        String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

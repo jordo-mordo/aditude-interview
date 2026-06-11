@@ -8,6 +8,8 @@ import { canManageUsers } from "@/lib/roles"
 import { initials, avatarGradient } from "@/lib/format"
 import { LoadingState } from "@/components/ui/Spinner"
 import { Collapsible } from "@/components/ui/Collapsible"
+import { PublisherIcon } from "@/components/ui/PublisherIcon"
+import { TAG_LABELS } from "@/lib/tags"
 import { ErrorMessage } from "@/components/ui/ErrorMessage"
 import { Badge, roleTone } from "@/components/ui/Badge"
 import { CreatePublisherForm } from "@/components/CreatePublisherForm"
@@ -97,13 +99,11 @@ export default function OrganizationDetailPage({ params }: { params: { id: strin
                     className="card flex animate-fade-in-up items-center gap-3 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
                     style={{ animationDelay: `${i * 50}ms` }}
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
-                        <path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6z" />
-                      </svg>
-                    </span>
-                    <span className="text-sm font-medium text-slate-800">{pub.name}</span>
+                    <PublisherIcon tag={pub.tag} />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-slate-800">{pub.name}</p>
+                      <p className="text-xs text-slate-400">{TAG_LABELS[pub.tag]}</p>
+                    </div>
                   </li>
                 ))}
               </ul>

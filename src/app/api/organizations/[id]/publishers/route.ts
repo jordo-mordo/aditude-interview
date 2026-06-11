@@ -18,7 +18,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     }
 
     const publisher = await prisma.publisher.create({
-      data: { name: input!.name, orgId: params.id },
+      data: { name: input!.name, tag: input!.tag, orgId: params.id },
     })
     return NextResponse.json(publisher, { status: 201 })
   } catch (err) {

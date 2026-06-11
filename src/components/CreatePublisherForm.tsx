@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { postJson } from "@/lib/api"
 import { ErrorMessage } from "@/components/ui/ErrorMessage"
+import { PUBLISHER_TAGS, TAG_LABELS } from "@/lib/tags"
 
 // Inline form to create a publisher in an org. Calls onCreated() so the page can refetch.
 export function CreatePublisherForm({
@@ -15,6 +16,7 @@ export function CreatePublisherForm({
   onCancel: () => void
 }) {
   const [name, setName] = useState("")
+  const [tag, setTag] = useState<string>("NEWS")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -23,7 +25,7 @@ export function CreatePublisherForm({
     setSubmitting(true)
     setError(null)
     try {
-      await postJson(`/api/organizations/${orgId}/publishers`, { name })
+      await postJson(`/api/organizations/${orgId}/publishers`, { name, tag })
       setName("")
       onCreated()
     } catch (err) {
@@ -35,19 +37,38 @@ export function CreatePublisherForm({
 
   return (
     <form onSubmit={handleSubmit} className="card space-y-4 p-5">
-      <div>
-        <label htmlFor="publisher-name" className="label">
-          Publisher name
-        </label>
-        <input
-          id="publisher-name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          required
-          autoFocus
-          className="input"
-        />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label htmlFor="publisher-name" className="label">
+            Publisher name
+          </label>
+          <input
+            id="publisher-name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            autoFocus
+            className="input"
+          />
+        </div>
+        <div>
+          <label htmlFor="publisher-tag" className="label">
+            Category
+          </label>
+          <select
+            id="publisher-tag"
+            value={tag}
+            onChange={(e) => setTag(e.target.value)}
+            className="input"
+          >
+            {PUBLISHER_TAGS.map((t) => (
+              <option key={t} value={t}>
+                {TAG_LABELS[t]}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       {error && <ErrorMessage message={error} />}

@@ -41,18 +41,18 @@ async function main() {
 
   // --- Publishers ---
   const [apexDaily, apexWeekly, apexSports] = await Promise.all([
-    prisma.publisher.create({ data: { name: "Apex Daily", orgId: mediaGroup.id } }),
-    prisma.publisher.create({ data: { name: "Apex Weekly", orgId: mediaGroup.id } }),
-    prisma.publisher.create({ data: { name: "Apex Sports", orgId: mediaGroup.id } }),
+    prisma.publisher.create({ data: { name: "Apex Daily", orgId: mediaGroup.id, tag: "NEWS" } }),
+    prisma.publisher.create({ data: { name: "Apex Weekly", orgId: mediaGroup.id, tag: "LIFESTYLE" } }),
+    prisma.publisher.create({ data: { name: "Apex Sports", orgId: mediaGroup.id, tag: "SPORTS" } }),
   ])
 
   const [techCrunch, devDigest] = await Promise.all([
-    prisma.publisher.create({ data: { name: "TechCrunch Beat", orgId: techPress.id } }),
-    prisma.publisher.create({ data: { name: "Dev Digest", orgId: techPress.id } }),
+    prisma.publisher.create({ data: { name: "TechCrunch Beat", orgId: techPress.id, tag: "TECHNOLOGY" } }),
+    prisma.publisher.create({ data: { name: "Dev Digest", orgId: techPress.id, tag: "GAMING" } }),
   ])
 
   const [cityBeat] = await Promise.all([
-    prisma.publisher.create({ data: { name: "City Beat", orgId: localNews.id } }),
+    prisma.publisher.create({ data: { name: "City Beat", orgId: localNews.id, tag: "NEWS" } }),
   ])
 
   // --- Org memberships ---

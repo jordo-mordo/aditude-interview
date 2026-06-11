@@ -1,4 +1,5 @@
 import { SystemRole, OrgRole, PublisherPermission } from "./roles"
+import { PublisherTag } from "./tags"
 
 // Shapes returned by the Part 2 API routes (src/app/api/organizations/...).
 // Kept in sync with the DTOs those handlers build (note: passwordHash is never included).
@@ -13,6 +14,7 @@ export interface OrganizationSummary {
 export interface PublisherDTO {
   id: string
   name: string
+  tag: PublisherTag
   createdAt: string
 }
 

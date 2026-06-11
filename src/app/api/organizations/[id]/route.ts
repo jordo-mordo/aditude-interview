@@ -43,6 +43,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       publishers: org.publishers.map((p) => ({
         id: p.id,
         name: p.name,
+        tag: p.tag,
         createdAt: p.createdAt,
       })),
       members: org.memberships.map((m) => ({
