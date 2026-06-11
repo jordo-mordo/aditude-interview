@@ -91,19 +91,19 @@ async function main() {
   }
 
   // Alice — full control on all Apex publishers
-  await grantAccess(alice.id, apexDaily.id,  ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"])
-  await grantAccess(alice.id, apexWeekly.id, ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"])
-  await grantAccess(alice.id, apexSports.id, ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"])
+  await grantAccess(alice.id, apexDaily.id,  ["VIEW", "EDIT", "PUBLISH"])
+  await grantAccess(alice.id, apexWeekly.id, ["VIEW", "EDIT", "PUBLISH"])
+  await grantAccess(alice.id, apexSports.id, ["VIEW", "EDIT", "PUBLISH"])
 
   // Bob — edit on Apex Daily, full control on TechPress publishers
   await grantAccess(bob.id, apexDaily.id,   ["VIEW", "EDIT"])
-  await grantAccess(bob.id, techCrunch.id,  ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"])
-  await grantAccess(bob.id, devDigest.id,   ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"])
+  await grantAccess(bob.id, techCrunch.id,  ["VIEW", "EDIT", "PUBLISH"])
+  await grantAccess(bob.id, devDigest.id,   ["VIEW", "EDIT", "PUBLISH"])
 
   // Carol — view-only on Apex, owns City Beat
   await grantAccess(carol.id, apexDaily.id,  ["VIEW"])
   await grantAccess(carol.id, apexWeekly.id, ["VIEW"])
-  await grantAccess(carol.id, cityBeat.id,   ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"])
+  await grantAccess(carol.id, cityBeat.id,   ["VIEW", "EDIT", "PUBLISH"])
 
   // Dave — editor on TechPress publishers
   await grantAccess(dave.id, techCrunch.id, ["VIEW", "EDIT", "PUBLISH"])
