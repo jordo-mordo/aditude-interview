@@ -1,0 +1,87 @@
+// Generates the typed TypeScript client used in API routes
+generator client {
+  provider = "prisma-client-js"
+}
+
+// SQLite = local file, zero setup. Swap provider to "postgresql" for production.
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Top-level tenant — everything else belongs to an org
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  publishers  Publisher[]
+  memberships OrganizationMembership[]
+}
+
+model Publisher {
+  id           String   @id @default(cuid())
+  name         String
+  orgId        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  organization Organization    @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  access       PublisherAccess[]
+
+  @@unique([orgId, name]) // name must be unique within an org, not globally
+}
+
+// Users are standalone — org and publisher access is granted via join tables below
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String?  // nullable until auth is implemented
+  systemRole   String   @default("USER") // "USER" | "ADMIN" — stored as String, SQLite has no enum type
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  memberships     OrganizationMembership[]
+  publisherAccess PublisherAccess[]
+}
+
+// Join table: User ↔ Organization, with a per-org role
+model OrganizationMembership {
+  id        String   @id @default(cuid())
+  userId    String
+  orgId     String
+  role      String   @default("MEMBER") // "OWNER" | "ADMIN" | "MEMBER"
+  createdAt DateTime @default(now())
+
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, orgId])
+}
+
+// Join table: User ↔ Publisher — permissions are child rows in PublisherPermission
+model PublisherAccess {
+  id          String   @id @default(cuid())
+  userId      String
+  publisherId String
+  createdAt   DateTime @default(now())
+
+  user        User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  publisher   Publisher             @relation(fields: [publisherId], references: [id], onDelete: Cascade)
+  permissions PublisherPermission[]
+
+  @@unique([userId, publisherId])
+}
+
+// One row per permission granted — separate rows because SQLite has no array column type
+model PublisherPermission {
+  id         String @id @default(cuid())
+  accessId   String
+  permission String // "VIEW" | "EDIT" | "PUBLISH" | "MANAGE_USERS"
+
+  access PublisherAccess @relation(fields: [accessId], references: [id], onDelete: Cascade)
+
+  @@unique([accessId, permission])
+}
