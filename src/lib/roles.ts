@@ -1,11 +1,11 @@
 // Single source of truth for all role and permission values.
 // The DB stores these as plain strings (SQLite has no native enum support),
-// so this file is where we enforce the allowed values at the TypeScript level.
+// so this file enforces the allowed values at the TypeScript level and feeds zod.
 
-export type SystemRole = "USER" | "ADMIN"
-export type OrgRole = "OWNER" | "ADMIN" | "MEMBER"
-export type PublisherPermission = "VIEW" | "EDIT" | "PUBLISH" | "MANAGE_USERS"
+export const SYSTEM_ROLES = ["USER", "ADMIN"] as const
+export const ORG_ROLES = ["OWNER", "ADMIN", "MEMBER"] as const
+export const PUBLISHER_PERMISSIONS = ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"] as const
 
-export const SYSTEM_ROLES: SystemRole[] = ["USER", "ADMIN"]
-export const ORG_ROLES: OrgRole[] = ["OWNER", "ADMIN", "MEMBER"]
-export const PUBLISHER_PERMISSIONS: PublisherPermission[] = ["VIEW", "EDIT", "PUBLISH", "MANAGE_USERS"]
+export type SystemRole = (typeof SYSTEM_ROLES)[number]
+export type OrgRole = (typeof ORG_ROLES)[number]
+export type PublisherPermission = (typeof PUBLISHER_PERMISSIONS)[number]
