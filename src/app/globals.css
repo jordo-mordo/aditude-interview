@@ -1,3 +1,110 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply text-slate-800 antialiased;
+    background:
+      radial-gradient(48rem 48rem at 100% -10%, rgba(99, 102, 241, 0.10), transparent 60%),
+      radial-gradient(42rem 42rem at -10% 5%, rgba(168, 85, 247, 0.08), transparent 55%),
+      #f8fafc;
+    background-attachment: fixed;
+  }
+}
+
+/* Reusable building blocks so pages and forms stay visually consistent. */
+@layer components {
+  .card {
+    @apply rounded-2xl border border-slate-200/70 bg-white/80 shadow-sm backdrop-blur-sm;
+  }
+
+  .label {
+    @apply block text-sm font-medium text-slate-700;
+  }
+
+  .input {
+    @apply mt-1 w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 shadow-sm transition
+      placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-indigo-600 to-violet-600 px-4 py-2
+      text-sm font-semibold text-white shadow-sm transition duration-150 hover:from-indigo-500 hover:to-violet-500
+      hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500/40 active:scale-[0.97]
+      disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-4 py-2
+      text-sm font-medium text-slate-700 shadow-sm transition duration-150 hover:bg-slate-50
+      focus:outline-none focus:ring-2 focus:ring-slate-400/30 active:scale-[0.97];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600
+      transition duration-150 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400/30;
+  }
+
+  /* Gradient avatar/logo tile. The from-/to- gradient pair is supplied per use
+     (see avatarGradient in src/lib/format.ts) so each entity gets its own color. */
+  .avatar {
+    @apply inline-flex shrink-0 items-center justify-center rounded-xl bg-gradient-to-br
+      font-semibold text-white shadow-sm;
+  }
+}
+
+/* Motion ------------------------------------------------------------------ */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.45s cubic-bezier(0.21, 1.02, 0.73, 1) both;
+}
+
+.animate-slide-down {
+  animation: slide-down 0.4s ease-out both;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-in both;
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in-up,
+  .animate-slide-down,
+  .animate-slide-up {
+    animation: none;
+  }
+}

@@ -34,9 +34,9 @@ export function CreatePublisherForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 rounded-md border border-slate-200 bg-slate-50 p-4">
+    <form onSubmit={handleSubmit} className="card space-y-4 p-5">
       <div>
-        <label htmlFor="publisher-name" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="publisher-name" className="label">
           Publisher name
         </label>
         <input
@@ -46,25 +46,17 @@ export function CreatePublisherForm({
           onChange={(e) => setName(e.target.value)}
           required
           autoFocus
-          className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+          className="input"
         />
       </div>
 
       {error && <ErrorMessage message={error} />}
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? "Creating…" : "Create publisher"}
         </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-        >
+        <button type="button" onClick={onCancel} className="btn-secondary">
           Cancel
         </button>
       </div>

@@ -4,10 +4,12 @@ import { useState } from "react"
 import Link from "next/link"
 import { useFetch } from "@/lib/useFetch"
 import { OrganizationDetail } from "@/lib/types"
+import { canManageUsers } from "@/lib/roles"
+import { initials, avatarGradient } from "@/lib/format"
 import { LoadingState } from "@/components/ui/Spinner"
+import { Collapsible } from "@/components/ui/Collapsible"
 import { ErrorMessage } from "@/components/ui/ErrorMessage"
 import { Badge, roleTone } from "@/components/ui/Badge"
-import { canManageUsers } from "@/lib/roles"
 import { CreatePublisherForm } from "@/components/CreatePublisherForm"
 import { AddUserForm } from "@/components/AddUserForm"
 
@@ -20,17 +22,21 @@ export default function OrganizationDetailPage({ params }: { params: { id: strin
 
   return (
     <div className="space-y-8">
-      <Link href="/" className="inline-block text-sm text-slate-500 hover:text-slate-700">
-        ← Back to organizations
+      <Link href="/" className="btn-ghost -ml-3">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <path d="m12 19-7-7 7-7" />
+          <path d="M19 12H5" />
+        </svg>
+        Back to organizations
       </Link>
 
       {loading && <LoadingState label="Loading organization" />}
 
       {error && !loading && (
         status === 404 ? (
-          <div className="space-y-2">
-            <p className="text-slate-700">Organization not found.</p>
-            <Link href="/" className="text-sm text-blue-600 hover:underline">
+          <div className="card flex flex-col items-center gap-2 py-16 text-center">
+            <p className="font-medium text-slate-700">Organization not found</p>
+            <Link href="/" className="text-sm font-medium text-indigo-600 hover:underline">
               Return to dashboard
             </Link>
           </div>
@@ -42,30 +48,35 @@ export default function OrganizationDetailPage({ params }: { params: { id: strin
       {org && !loading && (
         <>
           {/* Header / metadata */}
-          <header className="space-y-1">
-            <h1 className="text-2xl font-bold text-slate-900">{org.name}</h1>
-            <p className="text-sm text-slate-500">
-              {org.publishers.length} publisher{org.publishers.length === 1 ? "" : "s"} ·{" "}
-              {org.members.length} member{org.members.length === 1 ? "" : "s"} · Created{" "}
-              {new Date(org.createdAt).toLocaleDateString()}
-            </p>
+          <header className="card flex animate-fade-in-up items-center gap-4 p-6">
+            <span className={`avatar h-14 w-14 text-lg ${avatarGradient(org.id)}`}>{initials(org.name)}</span>
+            <div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900">{org.name}</h1>
+              <p className="mt-1 text-sm text-slate-500">
+                {org.publishers.length} publisher{org.publishers.length === 1 ? "" : "s"} ·{" "}
+                {org.members.length} member{org.members.length === 1 ? "" : "s"} · Created{" "}
+                {new Date(org.createdAt).toLocaleDateString()}
+              </p>
+            </div>
           </header>
 
           {/* Publishers */}
-          <section className="space-y-3">
+          <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Publishers</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Publishers <span className="text-slate-400">({org.publishers.length})</span>
+              </h2>
               <button
                 type="button"
                 onClick={() => setShowPublisherForm((v) => !v)}
                 aria-expanded={showPublisherForm}
-                className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                className={showPublisherForm ? "btn-secondary" : "btn-primary"}
               >
                 {showPublisherForm ? "Close" : "New publisher"}
               </button>
             </div>
 
-            {showPublisherForm && (
+            <Collapsible open={showPublisherForm}>
               <CreatePublisherForm
                 orgId={org.id}
                 onCreated={() => {
@@ -74,15 +85,25 @@ export default function OrganizationDetailPage({ params }: { params: { id: strin
                 }}
                 onCancel={() => setShowPublisherForm(false)}
               />
-            )}
+            </Collapsible>
 
             {org.publishers.length === 0 ? (
               <p className="text-sm text-slate-500">No publishers yet.</p>
             ) : (
-              <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {org.publishers.map((pub) => (
-                  <li key={pub.id} className="rounded border border-slate-200 px-3 py-2 text-sm font-medium text-slate-800">
-                    {pub.name}
+              <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {org.publishers.map((pub, i) => (
+                  <li
+                    key={pub.id}
+                    className="card flex animate-fade-in-up items-center gap-3 p-4 transition duration-200 hover:-translate-y-0.5 hover:border-indigo-200 hover:shadow-md"
+                    style={{ animationDelay: `${i * 50}ms` }}
+                  >
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
+                        <path d="M18 14h-8M15 18h-5M10 6h8v4h-8V6z" />
+                      </svg>
+                    </span>
+                    <span className="text-sm font-medium text-slate-800">{pub.name}</span>
                   </li>
                 ))}
               </ul>
@@ -90,20 +111,22 @@ export default function OrganizationDetailPage({ params }: { params: { id: strin
           </section>
 
           {/* Members */}
-          <section className="space-y-3">
+          <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-slate-900">Members</h2>
+              <h2 className="text-lg font-semibold text-slate-900">
+                Members <span className="text-slate-400">({org.members.length})</span>
+              </h2>
               <button
                 type="button"
                 onClick={() => setShowUserForm((v) => !v)}
                 aria-expanded={showUserForm}
-                className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                className={showUserForm ? "btn-secondary" : "btn-primary"}
               >
                 {showUserForm ? "Close" : "Add user"}
               </button>
             </div>
 
-            {showUserForm && (
+            <Collapsible open={showUserForm}>
               <AddUserForm
                 orgId={org.id}
                 publishers={org.publishers}
@@ -113,33 +136,45 @@ export default function OrganizationDetailPage({ params }: { params: { id: strin
                 }}
                 onCancel={() => setShowUserForm(false)}
               />
-            )}
+            </Collapsible>
 
             {org.members.length === 0 ? (
               <p className="text-sm text-slate-500">No members yet.</p>
             ) : (
               <ul className="space-y-3">
-                {org.members.map((member) => (
-                  <li key={member.membershipId} className="rounded-lg border border-slate-200 p-4">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="font-semibold text-slate-900">{member.user.name}</span>
-                      <span className="text-sm text-slate-500">{member.user.email}</span>
-                      <Badge tone={roleTone(member.user.systemRole)}>System: {member.user.systemRole}</Badge>
-                      <Badge tone={roleTone(member.role)}>Org: {member.role}</Badge>
-                      {canManageUsers(member.role) && <Badge tone="amber">Can manage users</Badge>}
+                {org.members.map((member, i) => (
+                  <li
+                    key={member.membershipId}
+                    className="card animate-fade-in-up p-5 transition duration-200 hover:shadow-md"
+                    style={{ animationDelay: `${i * 50}ms` }}
+                  >
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className={`avatar h-10 w-10 text-sm ${avatarGradient(member.user.id)}`}>
+                        {initials(member.user.name)}
+                      </span>
+                      <div className="mr-auto">
+                        <p className="font-semibold text-slate-900">{member.user.name}</p>
+                        <p className="text-sm text-slate-500">{member.user.email}</p>
+                      </div>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Badge tone={roleTone(member.user.systemRole)}>System: {member.user.systemRole}</Badge>
+                        <Badge tone={roleTone(member.role)}>Org: {member.role}</Badge>
+                        {canManageUsers(member.role) && <Badge tone="amber">Can manage users</Badge>}
+                      </div>
                     </div>
 
-                    <div className="mt-3">
+                    <div className="mt-4 border-t border-slate-100 pt-3">
                       <p className="text-xs font-medium uppercase tracking-wide text-slate-400">
                         Publisher access
                       </p>
                       {member.publisherAccess.length === 0 ? (
-                        <p className="mt-1 text-sm text-slate-500">No publisher access in this organization.</p>
+                        <p className="mt-1.5 text-sm text-slate-500">No publisher access in this organization.</p>
                       ) : (
-                        <ul className="mt-1 space-y-1.5">
+                        <ul className="mt-2 space-y-2">
                           {member.publisherAccess.map((access) => (
                             <li key={access.publisherId} className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm font-medium text-slate-700">{access.publisherName}:</span>
+                              <span className="text-sm font-medium text-slate-700">{access.publisherName}</span>
+                              <span className="text-slate-300">·</span>
                               {access.permissions.map((perm) => (
                                 <Badge key={perm} tone={roleTone(perm)}>
                                   {perm}

@@ -77,10 +77,10 @@ export function AddUserForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-md border border-slate-200 bg-slate-50 p-4">
+    <form onSubmit={handleSubmit} className="card space-y-5 p-5">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label htmlFor="user-name" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="user-name" className="label">
             Name
           </label>
           <input
@@ -89,11 +89,11 @@ export function AddUserForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className="input"
           />
         </div>
         <div>
-          <label htmlFor="user-email" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="user-email" className="label">
             Email
           </label>
           <input
@@ -102,12 +102,12 @@ export function AddUserForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className="input"
           />
         </div>
         <div>
-          <label htmlFor="user-password" className="block text-sm font-medium text-slate-700">
-            Password <span className="text-slate-400">(optional)</span>
+          <label htmlFor="user-password" className="label">
+            Password <span className="font-normal text-slate-400">(optional)</span>
           </label>
           <input
             id="user-password"
@@ -116,19 +116,19 @@ export function AddUserForm({
             onChange={(e) => setPassword(e.target.value)}
             minLength={8}
             placeholder="Min 8 characters"
-            className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+            className="input"
           />
         </div>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label htmlFor="user-system-role" className="block text-sm font-medium text-slate-700">
+            <label htmlFor="user-system-role" className="label">
               System role
             </label>
             <select
               id="user-system-role"
               value={systemRole}
               onChange={(e) => setSystemRole(e.target.value)}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+              className="input"
             >
               {SYSTEM_ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -138,14 +138,14 @@ export function AddUserForm({
             </select>
           </div>
           <div>
-            <label htmlFor="user-org-role" className="block text-sm font-medium text-slate-700">
+            <label htmlFor="user-org-role" className="label">
               Org role
             </label>
             <select
               id="user-org-role"
               value={orgRole}
               onChange={(e) => setOrgRole(e.target.value)}
-              className="mt-1 w-full rounded border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-500"
+              className="input"
             >
               {ORG_ROLES.map((r) => (
                 <option key={r} value={r}>
@@ -157,8 +157,8 @@ export function AddUserForm({
         </div>
       </div>
 
-      <fieldset className="rounded border border-slate-200 bg-white p-3">
-        <legend className="px-1 text-sm font-medium text-slate-700">Publisher access</legend>
+      <fieldset className="rounded-xl border border-slate-200 bg-slate-50/60 p-4">
+        <legend className="px-1.5 text-sm font-medium text-slate-700">Publisher access</legend>
         {publishers.length === 0 ? (
           <p className="text-sm text-slate-500">This organization has no publishers yet.</p>
         ) : (
@@ -167,23 +167,30 @@ export function AddUserForm({
               const selected = access[pub.id]
               const isChecked = selected !== undefined
               return (
-                <li key={pub.id} className="rounded border border-slate-100 p-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-slate-800">
+                <li
+                  key={pub.id}
+                  className={`rounded-lg border bg-white p-3 transition ${
+                    isChecked ? "border-indigo-200 ring-1 ring-indigo-100" : "border-slate-200"
+                  }`}
+                >
+                  <label className="flex items-center gap-2.5 text-sm font-medium text-slate-800">
                     <input
                       type="checkbox"
                       checked={isChecked}
                       onChange={(e) => togglePublisher(pub.id, e.target.checked)}
+                      className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     {pub.name}
                   </label>
                   {isChecked && (
-                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 pl-6">
+                    <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5 pl-7">
                       {PUBLISHER_PERMISSIONS.map((perm) => (
                         <label key={perm} className="flex items-center gap-1.5 text-sm text-slate-600">
                           <input
                             type="checkbox"
                             checked={selected.has(perm)}
                             onChange={(e) => togglePermission(pub.id, perm, e.target.checked)}
+                            className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                           />
                           {perm}
                         </label>
@@ -200,18 +207,10 @@ export function AddUserForm({
       {error && <ErrorMessage message={error} />}
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={submitting}
-          className="rounded bg-slate-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? "Adding…" : "Add user"}
         </button>
-        <button
-          type="button"
-          onClick={onCancel}
-          className="rounded border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-600 hover:bg-slate-100"
-        >
+        <button type="button" onClick={onCancel} className="btn-secondary">
           Cancel
         </button>
       </div>
